@@ -8,3 +8,159 @@
     <p>This website is running on an Ubuntu EC2 instance.</p>
 </body>
 </html>
+
+
+
+<!-- This is a smart strategy. In a high-pressure exam, having a "Runbook" saves you from simple syntax errors. Here is the complete, start-to-finish guide based on our session, organized logically for a README or a cheat sheet.
+
+---
+
+# AWS EC2 Deployment Guide (Ubuntu)
+
+## Phase 1: Local Preparation (Windows)
+
+1. **Create Website:** Create an `index.html` file on your local machine (e.g., `D:\Project\index.html`).
+2. **AWS Setup:**
+* Launch EC2 (Ubuntu 24.04/22.04 LTS).
+* **Security Group:** Ensure **Port 22 (SSH)** and **Port 80 (HTTP)** are open.
+* **Download Key:** Save the `.pem` file (e.g., `C:\Users\Parth\my-aws-key.pem`).
+
+
+
+---
+
+## Phase 2: Connecting to the Server
+
+### **Situation: Standard Connection**
+
+Open PowerShell/CMD and run:
+
+```cmd
+ssh -i "C:\Users\Parth\my-aws-key.pem" ubuntu@<Public_IP>
+
+```
+
+### **Troubleshooting Connection Errors**
+
+* **Error:** `Warning: Identity file... not accessible: No such file or directory`
+* **Reason:** The terminal is looking in the wrong folder.
+* **Fix:** Use the **Absolute Path** (e.g., `C:\Users\...`) or `cd` into the folder where the key is.
+
+
+* **Error:** `Permission denied (publickey)`
+* **Reason:** The key file is "too open" (Windows permissions are too broad) or it's the wrong key.
+* **Fix (PowerShell Commands):**
+```powershell
+icacls "my-aws-key.pem" /inheritance:r
+icacls "my-aws-key.pem" /grant:r "$($env:USERNAME):R"
+
+```
+
+
+
+
+
+---
+
+## Phase 3: Server Configuration (Inside Ubuntu)
+
+Once the prompt looks like `ubuntu@ip-xxx-xx-xx-xx:~$`, run these:
+
+1. **Update Packages:**
+```bash
+sudo apt update
+
+```
+
+
+2. **Install Nginx:**
+```bash
+sudo apt install nginx -y
+
+```
+
+
+3. **Check if running:**
+```bash
+sudo systemctl status nginx
+
+```
+
+
+*(Press `q` to exit the status view)*
+
+---
+
+## Phase 4: Deploying from GitHub
+
+This is the most likely exam scenario.
+
+1. **Remove Default Nginx Page:**
+```bash
+sudo rm /var/www/html/index.nginx-debian.html
+
+```
+
+
+2. **Clone Repo:**
+```bash
+cd ~
+git clone <Your_GitHub_Repo_URL>
+
+```
+
+
+3. **Deploy Files:**
+```bash
+cd <Your_Repo_Folder_Name>
+sudo cp -r * /var/www/html/
+
+```
+
+
+
+---
+
+## Phase 5: Remote Updates (Windows to AWS)
+
+If you need to push a single file from your Windows laptop to the server without GitHub:
+
+**From Windows CMD:**
+
+```cmd
+scp -i "C:\Users\Parth\my-aws-key.pem" "D:\Path\To\index.html" ubuntu@<Public_IP>:/home/ubuntu/
+
+```
+
+**Then, inside the Ubuntu Terminal, move it to the web folder:**
+
+```bash
+sudo mv /home/ubuntu/index.html /var/www/html/index.html
+
+```
+
+---
+
+## Common Commands Summary Table
+
+| Action | Command |
+| --- | --- |
+| **Check Web Server Status** | `sudo systemctl status nginx` |
+| **Restart Web Server** | `sudo systemctl restart nginx` |
+| **Go to Web Root Folder** | `cd /var/www/html` |
+| **Go to User Home Folder** | `cd ~` |
+| **List files in current folder** | `ls -la` |
+| **Delete a folder** | `sudo rm -rf <folder_name>` |
+| **Edit a file in terminal** | `sudo nano /var/www/html/index.html` |
+
+---
+
+## Final Check Checklist
+
+1. **Is Port 80 Open?** (Check AWS Security Group settings).
+2. **Is it HTTP or HTTPS?** (The demo will be `http://<IP>`. Browsers might force `https`, so manually type `http`).
+3. **Are file permissions correct?** (If you get a 403 Forbidden error, run `sudo chmod -R 755 /var/www/html`).
+
+```</Public_IP>
+
+``` -->
